@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Дом творчества — бронирование (прототип)</title>
+
+  <!-- ШРИФТЫ (без Playfair) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* Гамма телеграмм black*/
+        --bg:#0f1419;            /* тёмный фон Telegram */
+        --text:#e6edf3;          /* основной текст */
+        --muted:#8b949e;         /* вторичный текст */
+        --accent:#2f81f7;        /* Telegram blue (dark) */
+        --accent2:#1f6feb;       /* активный синий */
+        --danger:#ff7b72;
+        --ok:#7ee787;
+
+        --line:rgba(230,237,243,.14);
+        --shadow:0 12px 32px rgba(0,0,0,.45);
+        --radius:14px;
+
+      --font-body:'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --font-title:'PT Serif', Georgia, 'Times New Roman', serif;
+    }
+    html,body{height:100%;}
+
+:root[data-theme="light"]{
+  /* Telegram LIGHT */
+  --bg:#f5f7fa;
+  --text:#0f172a;
+  --muted:#6b7280;
+  --accent:#3390ec;
+  --accent2:#e6f0fb;
+  --danger:#e5533d;
+  --ok:#2ea043;
+
+  --line:rgba(15,23,42,.12);
+  --shadow:0 8px 24px rgba(15,23,42,.10);
+}
+
+body{
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.025) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+    var(--bg);
+}
+
+:root[data-theme="light"] body{
+  /* LIGHT pattern */
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(15,23,42,.06),
+      rgba(15,23,42,.06) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    radial-gradient(circle at 1px 1px,
+      rgba(15,23,42,.045) 1px,
+      transparent 0
+    ),
+    var(--bg);
+  background-size:
+    100% 4px,
+    24px 24px;
+}
+
+
+    .wrap{max-width:1120px;margin:32px auto 80px;padding:0 16px;}
+
+    header{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
+      margin-bottom:14px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;}
+
+
+.logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:var(--shadow);
+    }
+      .logo{
+  cursor: pointer;
+  position: relative;
+}
+
+.logo::after{
+  content: "☼";              /* или "◐", "⦿", "⇄" */
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  color: rgba(255, 209, 102, 0.92); /* тёплое солнце */
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+  pointer-events: none;      /* чтобы клики шли по логотипу */
+}
+
+      .logo:active{ transform: translateY(1px); } 
+
+:root[data-theme="light"] .logo::after{
+  color: rgba(230, 237, 243, 0.90); /* луна/свет */
+  content: "☾";
+  text-shadow: none;
+}
+
+
+    h1{margin:0;font-size:22px;letter-spacing:.2px;font-family:var(--font-title);font-weight:700;}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:14px;max-width:64ch;}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border:1px solid var(--line);
+      background:rgba(255,255,255,.10);border-radius:999px;
+      color:var(--muted);font-size:13px;
+    }
+    .pill b{color:var(--text);font-weight:700;}
+
+    /* HERO */
+    .hero{
+      position:relative;
+      margin:14px 0 18px;
+      padding:58px 44px;
+      border:1px solid var(--line);
+      border-radius:calc(var(--radius) + 4px);
+      background:
+        linear-gradient(180deg, rgba(11,58,90,.75), rgba(11,58,90,.35)),
+        radial-gradient(1200px 520px at 20% 10%, rgba(255,209,102,.28), transparent 55%),
+        radial-gradient(1000px 500px at 80% 20%, rgba(62,193,211,.28), transparent 60%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.020), rgba(255,255,255,.020) 1px, transparent 1px, transparent 3px);
+      opacity:.55;
+      pointer-events:none;
+    }
+    .heroInner{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:end;}
+    @media (max-width:860px){.heroInner{grid-template-columns:1fr;}}
+    .heroTitle{
+      font-family:var(--font-title);
+      font-size:34px;
+      line-height:1.12;
+      margin:0;
+      max-width:24ch;
+    }
+    .heroText{
+      margin:14px 0 0;
+      max-width:62ch;
+      font-size:16px;
+      color:var(--muted);
+      line-height:1.65;
+    }
+    .heroText em{font-style:normal;color:var(--text);}
+    .heroAside{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.10);
+      border-radius:16px;
+      padding:14px 14px 12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .heroAside b{color:var(--text);font-weight:700;font-family:var(--font-title);}
+    .heroAside .row{display:flex;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap;}
+    .heroAside .tag{border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.10);}
+
+    /* CONTROLS */
+    .controls{
+      display:grid;grid-template-columns:1.2fr 1.2fr .9fr .9fr auto;
+      gap:12px;align-items:end;
+      padding:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.10);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
+    input,select{
+      width:100%;box-sizing:border-box;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.30);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      border-radius:12px;
+      outline:none;
+    }
+    input:focus,select:focus{
+      border-color:rgba(255,209,102,.80);
+      box-shadow:0 0 0 4px rgba(255,209,102,.18);
+    }
+    button{
+      border:none;cursor:pointer;
+      padding:12px 14px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#083145;font-weight:800;
+      box-shadow:var(--shadow);
+    }
+    button:disabled{opacity:.55;cursor:not-allowed;}
+    @media (max-width:980px){
+      .controls{grid-template-columns:1fr 1fr 1fr 1fr;}
+      .controls .cta{grid-column:1/-1;}
+    }
+    @media (max-width:620px){
+      .controls{grid-template-columns:1fr 1fr;}
+    }
+
+    /* CARDS */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    @media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr);}}
+    @media (max-width:620px){.grid{grid-template-columns:1fr;}}
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      transition:transform .12s ease,border-color .12s ease;
+      backdrop-filter: blur(8px);
+    }
+    .card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.55);}
+    .thumb{
+      height:118px;
+      background:
+        linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
+        radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-title);
+      font-size:14px;
+      letter-spacing:1.2px;
+      color:rgba(249,251,250,.92);
+      text-transform:uppercase;
+    }
+    .content{padding:14px;}
+    .title{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .title h2{
+      margin:0;
+      font-size:16px;
+      font-family:var(--font-title);
+      font-weight:700;
+      letter-spacing:.25px;
+      color:var(--text);
+    }
+    .badge{
+      font-size:11px;padding:6px 10px;
+      border-radius:999px;border:1px solid rgba(255,255,255,.22);
+      color:var(--muted);background:rgba(0,0,0,.10);
+      white-space:nowrap;
+    }
+    .desc{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.55;min-height:44px;}
+    .meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;}
+    .chip{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.08);border:1px solid rgba(255,255,255,.22);color:var(--muted);}
+    .row{margin-top:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+    .price{font-size:14px;}
+    .price b{font-family:var(--font-title);font-weight:800;font-size:19px;color:var(--text);}
+    .avail{font-size:13px;color:var(--muted);}
+    .avail b{color:var(--text);font-weight:800;}
+    .card .action{
+      margin-top:10px;width:100%;
+      background:rgba(0,0,0,.10);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.24);
+      font-weight:800;
+    }
+    .card .action:hover{border-color:var(--accent);}
+    .card .action:disabled{opacity:.35;}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px;}
+    .overlay.show{display:flex;}
+    .modal{
+      width:min(940px,100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.26);
+      background:#06293d;
+      box-shadow:0 30px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+      max-height:92vh;
+    }
+    .modalHead{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.22);
+      background:linear-gradient(135deg, rgba(255,209,102,.18), rgba(62,193,211,.14));
+      position:sticky; top:0; z-index:2;
+    }
+    .modalHead h3{margin:0;font-size:16px;font-family:var(--font-title);font-weight:800;}
+    /* ВОТ ТВОЙ "КРЕСТИК" */
+    .x{
+      width:40px;height:40px;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:18px;line-height:1;
+      background:rgba(255,255,255,.10);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.26);
+      border-radius:12px;
+      padding:0;
+      box-shadow:none;
+      cursor:pointer;
+    }
+    .x:hover{ border-color: var(--accent); }
+    .modalBody{display:grid;grid-template-columns:1.1fr .9fr;gap:0; overflow:auto; max-height:calc(92vh - 56px);}
+    @media (max-width:860px){.modalBody{grid-template-columns:1fr;}}
+    .left,.right{padding:16px;}
+    .left{border-right:1px solid rgba(255,255,255,.20);}
+    @media (max-width:860px){.left{border-right:none;border-bottom:1px solid rgba(255,255,255,.20);}}
+    .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+    .kv .item{padding:10px 12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(0,0,0,.14);}
+    .kv .k{color:var(--muted);font-size:12px;}
+    .kv .v{margin-top:4px;font-weight:800;color:var(--text);}
+    .sectionTitle{
+      margin:16px 0 10px;
+      font-size:12px;color:var(--muted);
+      font-family:var(--font-title);
+      letter-spacing:.6px;
+      text-transform:uppercase;
+    }
+    .list{display:flex;flex-wrap:wrap;gap:8px;}
+    .right form{display:grid;gap:10px;}
+    .right .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media (max-width:520px){.right .two{grid-template-columns:1fr;}}
+    .note{font-size:12px;color:var(--muted);line-height:1.45;}
+    .payBtn{width:100%;margin-top:6px;}
+    .mini{font-size:12px;color:var(--muted);line-height:1.45;}
+    .danger{color:var(--danger);font-weight:800;}
+    .ok{color:var(--ok);font-weight:800;}
+    .breakdown{border:1px solid rgba(255,255,255,.20);border-radius:14px;overflow:hidden;}
+    .breakdown .brow{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.16);font-size:13px;color:var(--muted);}
+    .breakdown .brow:last-child{border-bottom:none;}
+    .breakdown b{color:var(--text);}
+    .toast{
+      position:fixed;right:18px;bottom:18px;max-width:380px;
+      padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.22);
+      background:rgba(6,41,61,.92);box-shadow:var(--shadow);display:none;
+    }
+    .toast.show{display:block;}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:var(--muted);}
+    .xBottom{
+      width:100%;
+      margin-top:10px;
+      background:rgba(0,0,0,.10);
+      color:var(--text);
+      font-weight:900;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" id="themeToggle" role="button" tabindex="0" aria-label="Переключить тему" title="Переключить тему"></div>
+        <div>
+          <h1>Дом творчества • бронирование</h1>
+          <div class="sub">
+            Кликабельный прототип. Данные — мок, логика — как в БД: доступность, PENDING-холд, сезонные цены.
+          </div>
+        </div>
+      </div>
+      <div class="pill">Статус: <b id="statusPill">выбери даты</b></div>
+    </header>
+
+    <section class="hero">
+      <div class="heroInner">
+        <div>
+          <div class="mono">Солнце • море • воздух</div>
+          <h2 class="heroTitle">Лето у воды.<br>Дышится легче.</h2>
+          <p class="heroText">
+            Здесь день длиннее. <em>Свет держится до позднего.</em><br>
+            Вода рядом, песок тёплый, и всё лишнее — отступает.
+          </p>
+        </div>
+        <aside class="heroAside">
+          <b>Правила</b><br>
+          Заезд 15:00 • Выезд 12:00<br>
+          Холд брони: 15 минут (PENDING)
+          <div class="row" style="margin-top:12px;">
+            <span class="tag">Море</span>
+            <span class="tag">Солнце</span>
+            <span class="tag">Пляж</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div>
+        <label>Заезд</label>
+        <input id="checkIn" type="date" />
+      </div>
+      <div>
+        <label>Выезд</label>
+        <input id="checkOut" type="date" />
+      </div>
+      <div>
+        <label>Взрослые</label>
+        <select id="adults">
+          <option>1</option><option selected>2</option><option>3</option><option>4</option>
+        </select>
+      </div>
+      <div>
+        <label>Дети</label>
+        <select id="kids">
+          <option selected>0</option><option>1</option><option>2</option>
+        </select>
+      </div>
+      <div class="cta">
+        <button id="btnSearch" disabled>Показать доступность</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Оформление бронирования">
+    <div class="modal">
+      <div class="modalHead">
+        <h3 id="mTitle">Оформление</h3>
+        <button class="x" id="btnClose" aria-label="Закрыть" title="Закрыть">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="left">
+          <div class="thumb" id="mThumb">ROOM</div>
+          <div class="kv">
+            <div class="item"><div class="k">Даты</div><div class="v" id="mDates">—</div></div>
+            <div class="item"><div class="k">Гости</div><div class="v" id="mGuests">—</div></div>
+            <div class="item"><div class="k">Свободно</div><div class="v" id="mAvail">—</div></div>
+            <div class="item"><div class="k">Мин. ночей</div><div class="v" id="mMin">—</div></div>
+          </div>
+
+          <div class="sectionTitle">Удобства</div>
+          <div class="list" id="mAmen"></div>
+
+          <div class="sectionTitle">Расчёт по ночам</div>
+          <div class="breakdown" id="mBreakdown"></div>
+
+          <div class="sectionTitle">Итого</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div class="note">Оплата в прототипе не настоящая: кнопка создаёт «PENDING» бронь и показывает подтверждение.</div>
+            <div class="price"><b id="mTotal">—</b> ₽</div>
+          </div>
+        </div>
+
+        <div class="right">
+          <form id="form">
+            <div class="two">
+              <div>
+                <label>Имя и фамилия</label>
+                <input id="fullName" required placeholder="Александр Кирпичников" />
+              </div>
+              <div>
+                <label>Телефон</label>
+                <input id="phone" required placeholder="+7 ..." />
+              </div>
+            </div>
+            <div class="two">
+              <div>
+                <label>Email</label>
+                <input id="email" required type="email" placeholder="mail@example.com" />
+              </div>
+              <div>
+                <label>Комментарий</label>
+                <input id="comment" placeholder="Буду поздно, выпивший..." />
+              </div>
+            </div>
+
+            <div class="note">
+              После нажатия «Перейти к оплате»:
+              <div class="mini">• создаётся бронь <b>PENDING</b> с холдом на 15 минут</div>
+              <div class="mini">• в реальном проекте здесь открывается Stripe/YooKassa</div>
+            </div>
+
+            <button class="payBtn" type="submit" id="btnPay">Перейти к оплате</button>
+            <div class="mini" id="mWarn"></div>
+            <button type="button" class="x xBottom" id="btnCloseBottom">Вернуться</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script src="./data/room_types.js"></script>
+<script src="./data/rates.js"></script>
+<script src="./theme.js"></script>
+
+
+<script>
+  const ROOM_TYPES = window.ROOM_TYPES;
+  const RATES = window.RATES;
+
+
+
+  const INVENTORY = { rt_std: 5, rt_stdp: 3, rt_fam: 2, rt_jun: 2, rt_lux: 1, rt_apt: 1 };
+  const LS_KEY = "booking_prototype_bookings_v3";
+
+  function loadBookings(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch { return []; } }
+  function saveBookings(b){ localStorage.setItem(LS_KEY, JSON.stringify(b)); }
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function toISODate(d){ return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+  function nightsBetween(a,b){
+    const da=new Date(a+"T00:00:00"); const db=new Date(b+"T00:00:00");
+    return Math.round((db-da)/(1000*60*60*24));
+  }
+  function eachNight(checkIn,checkOut){
+    const n=nightsBetween(checkIn,checkOut);
+    const start=new Date(checkIn+"T00:00:00");
+    const arr=[];
+    for(let i=0;i<n;i++){
+      const d=new Date(start); d.setDate(d.getDate()+i);
+      arr.push(toISODate(d));
+    }
+    return arr;
+  }
+  function rateFor(roomTypeId, day){
+    const r=RATES.find(x=>x.room_type_id===roomTypeId && x.from<=day && x.to>=day);
+    return r ? r.price : null;
+  }
+  function computePrice(roomTypeId, base, checkIn, checkOut){
+    const nights=eachNight(checkIn, checkOut);
+    const breakdown=nights.map(day=>{
+      const p=rateFor(roomTypeId, day);
+      return {date:day, price:(p ?? base)};
+    });
+    const total=breakdown.reduce((s,x)=>s+x.price,0);
+    return {breakdown,total};
+  }
+  function overlaps(a1,a2,b1,b2){ return (a1<b2) && (a2>b1); }
+
+  function expirePending(bookings){
+    const now=Date.now();
+    let changed=false;
+    for(const b of bookings){
+      if(b.status==="PENDING" && b.expires_at && new Date(b.expires_at).getTime()<=now){
+        b.status="EXPIRED"; changed=true;
+      }
+    }
+    if(changed) saveBookings(bookings);
+    return bookings;
+  }
+
+  function availableCount(roomTypeId, checkIn, checkOut){
+    const bookings=expirePending(loadBookings());
+    const inv=INVENTORY[roomTypeId] || 0;
+    let occupied=0;
+    for(const b of bookings){
+      if(b.room_type_id!==roomTypeId) continue;
+      if(!["PENDING","PAID","CONFIRMED"].includes(b.status)) continue;
+      if(overlaps(b.check_in, b.check_out, checkIn, checkOut)) occupied++;
+    }
+    return Math.max(0, inv - occupied);
+  }
+
+  const el=(id)=>document.getElementById(id);
+  const grid=el("grid");
+  const statusPill=el("statusPill");
+  const btnSearch=el("btnSearch");
+  const overlay=el("overlay");
+  const toast=el("toast");
+
+  const st={checkIn:"",checkOut:"",adults:2,kids:0,selected:null,computed:null};
+
+  function setStatus(text){ statusPill.textContent=text; }
+
+  function renderCards(){
+    grid.innerHTML="";
+    const can=st.checkIn && st.checkOut && nightsBetween(st.checkIn, st.checkOut)>0;
+    const nights=can ? nightsBetween(st.checkIn, st.checkOut) : 0;
+
+    for(const t of ROOM_TYPES){
+      const fit=st.adults<=t.capA && st.kids<=t.capK;
+      const avail=can && fit ? availableCount(t.id, st.checkIn, st.checkOut) : 0;
+      const price=can ? computePrice(t.id, t.base, st.checkIn, st.checkOut) : null;
+
+      const card=document.createElement("div");
+      card.className="card";
+      card.innerHTML=`
+        <div class="thumb">${t.name}</div>
+        <div class="content">
+          <div class="title">
+            <h2>${t.name}</h2>
+            <span class="badge">${t.capA} взр + ${t.capK} дет</span>
+          </div>
+          <div class="desc">${t.desc}</div>
+          <div class="meta">
+            ${t.amen.slice(0,5).map(x=>`<span class="chip">${x}</span>`).join("")}
+          </div>
+          <div class="row">
+            <div class="price">${can ? `за ${nights} ноч. <b>${price.total.toLocaleString("ru-RU")}</b> ₽` : `от <b>${t.base.toLocaleString("ru-RU")}</b> ₽/ночь`}</div>
+            <div class="avail">Доступно: <b>${can ? avail : "—"}</b></div>
+          </div>
+          <button class="action" ${(!can || !fit || avail<=0 || nights < t.min) ? "disabled" : ""}>
+            ${(!can) ? "Выбери даты" : (!fit ? "Не подходит по гостям" : (nights < t.min ? `Мин. ночей: ${t.min}` : (avail<=0 ? "Нет мест" : "Выбрать комнату")))}
+          </button>
+        </div>
+      `;
+      card.querySelector("button.action").addEventListener("click", ()=>openModal(t));
+      grid.appendChild(card);
+    }
+  }
+
+  function showToast(msg){
+    toast.textContent=msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 2800);
+  }
+
+  function openModal(t){
+    const can=st.checkIn && st.checkOut && nightsBetween(st.checkIn, st.checkOut)>0;
+    if(!can) return;
+
+    const nights=nightsBetween(st.checkIn, st.checkOut);
+    const fit=st.adults<=t.capA && st.kids<=t.capK;
+    const avail=fit ? availableCount(t.id, st.checkIn, st.checkOut) : 0;
+    const price=computePrice(t.id, t.base, st.checkIn, st.checkOut);
+
+    st.selected=t;
+    st.computed={nights,fit,avail,price};
+
+    el("mTitle").textContent=`Оформление: ${t.name}`;
+    el("mThumb").textContent=t.name.toUpperCase();
+    el("mDates").textContent=`${st.checkIn} → ${st.checkOut} (${nights} ноч.)`;
+    el("mGuests").textContent=`${st.adults} взр. + ${st.kids} дет.`;
+    el("mAvail").innerHTML=avail>0 ? `<span class="ok">${avail} доступно</span>` : `<span class="danger">нет мест</span>`;
+    el("mMin").textContent=t.min;
+    el("mAmen").innerHTML=t.amen.map(x=>`<span class="chip">${x}</span>`).join("");
+
+    el("mBreakdown").innerHTML=price.breakdown.map(x=>`
+      <div class="brow"><span>${x.date}</span><span><b>${x.price.toLocaleString("ru-RU")}</b> ₽</span></div>
+    `).join("");
+    el("mTotal").textContent=price.total.toLocaleString("ru-RU");
+
+    const warn=el("mWarn");
+    warn.textContent="";
+    warn.className="mini";
+
+    const btnPay=el("btnPay");
+    const disabled=(!fit || avail<=0 || nights < t.min);
+    btnPay.disabled=disabled;
+    if(disabled){
+      if(!fit){ warn.textContent="Не проходит по вместимости."; warn.className="mini danger"; }
+      else if(avail<=0){ warn.textContent="На эти даты нет свободных комнат."; warn.className="mini danger"; }
+      else if(nights < t.min){ warn.textContent=`Минимум ночей для этого типа: ${t.min}.`; warn.className="mini danger"; }
+    }
+
+    overlay.classList.add("show");
+  }
+
+  function closeModal(){ overlay.classList.remove("show"); }
+
+  el("btnClose").addEventListener("click", closeModal);
+  const btnCloseBottom = el("btnCloseBottom");
+  if(btnCloseBottom) btnCloseBottom.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) closeModal(); });
+  document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeModal(); });
+
+  // Controls
+  el("checkIn").addEventListener("change",(e)=>{
+    st.checkIn=e.target.value;
+    btnSearch.disabled=!(st.checkIn && st.checkOut);
+    setStatus(st.checkIn && st.checkOut ? "готово к поиску" : "выбери даты");
+  });
+  el("checkOut").addEventListener("change",(e)=>{
+    st.checkOut=e.target.value;
+    btnSearch.disabled=!(st.checkIn && st.checkOut);
+    setStatus(st.checkIn && st.checkOut ? "готово к поиску" : "выбери даты");
+  });
+  el("adults").addEventListener("change",(e)=>{ st.adults=Number(e.target.value); });
+  el("kids").addEventListener("change",(e)=>{ st.kids=Number(e.target.value); });
+
+  btnSearch.addEventListener("click", ()=>{
+    try{
+      const n=nightsBetween(st.checkIn, st.checkOut);
+      if(n<=0) throw new Error();
+      setStatus("показана доступность");
+      renderCards();
+    }catch{
+      showToast("Проверь даты: выезд должен быть позже заезда.");
+    }
+  });
+
+  // Booking form -> create mock PENDING booking with 15 min TTL
+  el("form").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const t=st.selected;
+    const c=st.computed;
+    if(!t || !c) return;
+
+    const full_name=el("fullName").value.trim();
+    const phone=el("phone").value.trim();
+    const email=el("email").value.trim();
+    const comment=el("comment").value.trim();
+
+    if(!full_name || !phone || !email){
+      showToast("Заполни имя, телефон и email.");
+      return;
+    }
+
+    const bookings=expirePending(loadBookings());
+    const availNow=availableCount(t.id, st.checkIn, st.checkOut);
+    if(availNow<=0){
+      showToast("Места только что закончились (мок).");
+      renderCards();
+      closeModal();
+      return;
+    }
+
+    const expires_at=new Date(Date.now()+15*60*1000).toISOString();
+    bookings.push({
+      id:"b_"+Math.random().toString(16).slice(2),
+      room_type_id:t.id,
+      check_in:st.checkIn,
+      check_out:st.checkOut,
+      adults:st.adults,
+      kids:st.kids,
+      full_name, phone, email, comment,
+      status:"PENDING",
+      expires_at,
+      total_price:c.price.total
+    });
+    saveBookings(bookings);
+
+    showToast(`Бронь создана: ${t.name}. Статус PENDING (15 минут).`);
+    renderCards();
+    closeModal();
+  });
+
+  // Init defaults: today+7 .. +9
+  (function init(){
+    const now=new Date();
+    const inD=new Date(now); inD.setDate(inD.getDate()+7);
+    const outD=new Date(now); outD.setDate(outD.getDate()+9);
+    st.checkIn=toISODate(inD);
+    st.checkOut=toISODate(outD);
+    el("checkIn").value=st.checkIn;
+    el("checkOut").value=st.checkOut;
+    btnSearch.disabled=false;
+    setStatus("готово к поиску");
+    renderCards();
+  })();
+</script>
+</body>
+</html>
