@@ -8,7 +8,7 @@ window.ROOM_TYPES = [
       capK: 0,
       base: 4500,
       min: 1,
-      amen: ["Wi-Fi", "Душ", "Рабочий стол", "Окно в сосны"]
+      amen: ["Wi-Fi", "Душ", "Рабочий стол", "Окно в сосны"],
       "photos": ["./img/rooms/std-1.jpg", "./img/rooms/std-2.jpg", "./img/rooms/std-3.jpg"]
     },
     {
@@ -19,7 +19,7 @@ window.ROOM_TYPES = [
       capK: 0,
       base: 5200,
       min: 1,
-      amen: ["Wi-Fi", "Душ", "Балкон", "Чайник"]
+      amen: ["Wi-Fi", "Душ", "Балкон", "Чайник"],
       "photos": ["./img/rooms/stdp-1.jpg"]
     },
     {
@@ -30,7 +30,7 @@ window.ROOM_TYPES = [
       capK: 2,
       base: 6800,
       min: 2,
-      amen: ["Wi-Fi", "Кухонный уголок", "Диван", "Хранение"]
+      amen: ["Wi-Fi", "Кухонный уголок", "Диван", "Хранение"],
       "photos": ["./img/rooms/fam-1.jpg"]
     },
     {
@@ -41,7 +41,7 @@ window.ROOM_TYPES = [
       capK: 1,
       base: 8500,
       min: 1,
-      amen: ["Wi-Fi", "Ванна", "Вид на залив", "Плотные шторы"]
+      amen: ["Wi-Fi", "Ванна", "Вид на залив", "Плотные шторы"],
       "photos": ["./img/rooms/jun-1.jpg"]
     },
     {
