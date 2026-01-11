@@ -9,6 +9,7 @@ window.ROOM_TYPES = [
       base: 4500,
       min: 1,
       amen: ["Wi-Fi", "Душ", "Рабочий стол", "Окно в сосны"]
+      "photos": ["./img/rooms/std-1.jpg", "./img/rooms/std-2.jpg", "./img/rooms/std-3.jpg"]
     },
     {
       id: "rt_stdp",
@@ -19,6 +20,7 @@ window.ROOM_TYPES = [
       base: 5200,
       min: 1,
       amen: ["Wi-Fi", "Душ", "Балкон", "Чайник"]
+      "photos": ["./img/rooms/stdp-1.jpg"]
     },
     {
       id: "rt_fam",
@@ -29,6 +31,7 @@ window.ROOM_TYPES = [
       base: 6800,
       min: 2,
       amen: ["Wi-Fi", "Кухонный уголок", "Диван", "Хранение"]
+      "photos": ["./img/rooms/fam-1.jpg"]
     },
     {
       id: "rt_jun",
@@ -39,6 +42,7 @@ window.ROOM_TYPES = [
       base: 8500,
       min: 1,
       amen: ["Wi-Fi", "Ванна", "Вид на залив", "Плотные шторы"]
+      "photos": ["./img/rooms/jun-1.jpg"]
     },
     {
       id: "rt_lux",
