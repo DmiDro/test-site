@@ -52,6 +52,10 @@ html{
 
 
 body{
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+
   background:
     repeating-linear-gradient(
       0deg,
@@ -63,8 +67,10 @@ body{
     var(--bg);
 }
 
+
 :root[data-theme="light"] body{
-  /* LIGHT pattern */
+  color: var(--text);
+
   background:
     repeating-linear-gradient(
       0deg,
@@ -82,6 +88,7 @@ body{
     100% 4px,
     24px 24px;
 }
+
 
 
     .wrap{max-width:1120px;margin:32px auto 80px;padding:0 16px;}
