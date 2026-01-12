@@ -217,17 +217,28 @@
     .card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.55);}
 
     .thumb{
-      height:118px;
-      background:
-        linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
-        radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
-      display:flex;align-items:center;justify-content:center;
-      font-family:var(--font-title);
-      font-size:14px;
-      letter-spacing:1.2px;
-      color:rgba(249,251,250,.92);
-      text-transform:uppercase;
-    }
+  width:100%;
+  aspect-ratio: 1 / 1;        /* ← КЛЮЧЕВОЕ: квадрат Карточка */
+  background:
+    linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
+    radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--font-title);
+  font-size:14px;
+  letter-spacing:1.2px;
+  color:rgba(249,251,250,.92);
+  text-transform:uppercase;
+}
+
+@supports not (aspect-ratio: 1 / 1){
+  .thumb{
+    height: 0;
+    padding-bottom: 100%;
+  }
+}
+
     .thumbLabel{
       padding:6px 10px;
       border-radius:999px;
