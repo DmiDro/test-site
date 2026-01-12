@@ -56,7 +56,7 @@ function overlaps(a1,a2,b1,b2){ return (a1<b2) && (a2>b1); }
 
 /* ===== inventory & localStorage ===== */
 
-const INVENTORY = { rt_std: 5, rt_stdp: 3, rt_fam: 2, rt_jun: 2, rt_lux: 1, rt_apt: 1 };
+const INVENTORY = window.INVENTORY || {};
 const LS_KEY = "booking_prototype_bookings_v3";
 
 function loadBookings(){
@@ -240,7 +240,7 @@ function renderCards(){
           <div class="price">${
             can
               ? `за ${nights} ноч. <b>${price.total.toLocaleString("ru-RU")}</b> ₽`
-              : `от <b>${t.base.toLocaleString("ru-RU")}</b> ₽/ночь`
+              : `от <b>${Math.min(t.base, (t.base_weekend ?? t.base)).toLocaleString("ru-RU")}</b> ₽/ночь`
           }</div>
           <div class="avail">Доступно: <b>${can ? avail : "—"}</b></div>
         </div>
