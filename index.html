@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="ru">
 <head>
@@ -14,11 +13,11 @@
   <style>
     :root{
       /* Гамма телеграмм black*/
-      --bg:#323a42;            /* тёмный фон */
-      --text:#e6edf3;          /* основной текст */
-      --muted:#8b949e;         /* вторичный текст */
-      --accent:#e6f0fb;        /* светлый */
-      --accent2:#3390ec;       /* синий */
+      --bg:#323a42;
+      --text:#e6edf3;
+      --muted:#8b949e;
+      --accent:#e6f0fb;
+      --accent2:#3390ec;
       --danger:#ff7b72;
       --ok:#7ee787;
 
@@ -217,20 +216,83 @@
     }
     .card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.55);}
 
-    .thumb{
-      height:180px;
+    /* NEW: верх карточки — фото слева, описание справа */
+    .cardTop{
+      display:grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap:12px;
+      padding:12px;
+      align-items:stretch;
+    }
+
+    /* NEW: слайдер на карточке */
+    .cGallery{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background: rgba(0,0,0,.12);
+      aspect-ratio: 1 / 1;     /* квадрат */
+    }
+    .cImg{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      touch-action: pan-y;
+    }
+    .cNav{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:36px;height:40px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      font-size:24px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .cPrev{ left:8px; }
+    .cNext{ right:8px; }
+
+    .cDots{
+      position:absolute;
+      left:0; right:0; bottom:8px;
+      display:flex; justify-content:center;
+      gap:8px;
+    }
+    .cDot{
+      width:8px;height:8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      cursor:pointer;
+      padding:0;
+      outline:none;
+    }
+    .cDot.active{ background: var(--accent2); }
+    .cDots button{ border:none; }
+
+    .cNoPhoto{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:var(--font-title);
+      letter-spacing:1.1px;
+      text-transform:uppercase;
+      color:rgba(249,251,250,.92);
       background:
         linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
         radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
-      display:flex;align-items:center;justify-content:center;
-      font-family:var(--font-title);
-      font-size:14px;
-      letter-spacing:1.2px;
-      color:rgba(249,251,250,.92);
-      text-transform:uppercase;
-      position:relative;
     }
-    .thumbLabel{
+    .cNoPhoto span{
       padding:6px 10px;
       border-radius:999px;
       background:rgba(0,0,0,.35);
@@ -238,7 +300,7 @@
       backdrop-filter: blur(6px);
     }
 
-    .content{padding:14px;}
+    .content{padding:0 12px 12px;}
     .title{display:flex;align-items:center;justify-content:space-between;gap:10px;}
     .title h2{
       margin:0;
@@ -254,7 +316,7 @@
       color:var(--muted);background:rgba(0,0,0,.10);
       white-space:nowrap;
     }
-    .desc{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.55;min-height:44px;}
+    .desc{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.55;}
     .meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;}
     .chip{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.08);border:1px solid rgba(255,255,255,.22);color:var(--muted);}
     .row{margin-top:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
@@ -308,6 +370,18 @@
     .left,.right{padding:16px;}
     .left{border-right:1px solid rgba(255,255,255,.20);}
 
+    /* NEW: маленькое фото-значок в модалке */
+    .mTinyRow{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+    .mTinyPhoto{
+      width:64px;height:64px;border-radius:14px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(0,0,0,.14);
+      flex:0 0 auto;
+    }
+    .mTinyPhoto img{width:100%;height:100%;object-fit:cover;display:block;}
+    .mTinyText{color:var(--muted);font-size:13px;line-height:1.45;}
+    .mTinyText b{color:var(--text);font-family:var(--font-title);}
+
     .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
     .kv .item{padding:10px 12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(0,0,0,.14);}
     .kv .k{color:var(--muted);font-size:12px;}
@@ -346,92 +420,20 @@
       font-weight:900;
     }
 
-    /* --- slider buttons/dots (reused) --- */
-    .gImg{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      touch-action: pan-y;
-    }
-    .gNav{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      width:40px;height:44px;
+    /* NEW: чекбокс завтрака */
+    .checkRow{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.20);
       border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      font-size:26px;
-      font-weight:900;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      z-index:2;
+      background:rgba(0,0,0,.12);
+      margin-top:10px;
     }
-    .gPrev{ left:10px; }
-    .gNext{ right:10px; }
-    .gDots{
-      position:absolute;
-      left:0; right:0; bottom:10px;
-      display:flex; justify-content:center;
-      gap:8px;
-      z-index:2;
-    }
-    .gDot{
-      width:8px;height:8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-      cursor:pointer;
-      padding:0;
-      outline:none;
-    }
-    .gDot.active{ background: var(--accent2); }
-    .gDots button{ border:none; }
+    .checkRow input{width:18px;height:18px;}
+    .checkRow .lbl{color:var(--text);font-weight:800;}
+    .checkRow .hint{color:var(--muted);font-size:12px;margin-left:auto;text-align:right;}
 
-    /* --- card slider label --- */
-    .thumbCard{ position:relative; padding:0; }
-    .thumbCard .thumbLabelLite{
-      position:absolute; left:10px; top:10px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.22);
-      backdrop-filter: blur(6px);
-      font-family:var(--font-title);
-      font-size:13px;
-      color:rgba(249,251,250,.92);
-      text-transform:none;
-      letter-spacing:.2px;
-      z-index:2;
-    }
-
-    /* --- modal top block (small photo + text) --- */
-    .mTop{
-      display:grid;
-      grid-template-columns: 120px 1fr;
-      gap:12px;
-      align-items:start;
-      margin-bottom:12px;
-    }
-    .mThumb{
-      width:120px;height:120px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      background: rgba(0,0,0,.10);
-    }
-    .mThumb img{
-      width:100%;height:100%;
-      object-fit:cover;display:block;
-    }
-
-    /* =========================
-       RESPONSIVE (KEEP AT END)
-       ========================= */
+    /* RESPONSIVE */
     @media (max-width: 980px){
       .heroInner{ grid-template-columns:1fr; }
       .controls{ grid-template-columns: 1fr 1fr; }
@@ -471,12 +473,9 @@
       .controls{ grid-template-columns: 1fr; }
       .controls .cta{ grid-column: 1 / -1; }
       .grid{ grid-template-columns: 1fr; }
-    }
-    @media (max-width: 520px){
-      .right .two{ grid-template-columns: 1fr; }
-      .gNav{ width:36px; height:40px; }
-      .mTop{ grid-template-columns: 100px 1fr; }
-      .mThumb{ width:100px; height:100px; }
+
+      .cardTop{ grid-template-columns: 1fr; }
+      .cGallery{ aspect-ratio: 16 / 10; } /* на мобиле пусть шире */
     }
   </style>
 </head>
@@ -555,17 +554,15 @@
 
       <div class="modalBody">
         <div class="left">
-          <!-- small photo + description -->
-          <div class="mTop">
-            <div class="mThumb">
-              <img id="mThumbImg" alt="Фото номера" />
+
+          <!-- NEW: маленькое фото + краткое описание -->
+          <div class="mTinyRow">
+            <div class="mTinyPhoto" id="mTinyPhotoWrap" aria-hidden="true">
+              <img id="mTinyPhoto" alt="">
             </div>
-            <div class="mTopText">
-              <div class="sectionTitle" style="margin:0 0 6px;">Описание</div>
-              <div class="desc" id="mDesc" style="min-height:auto;margin:0;color:var(--text);"></div>
-              <div class="mini" style="margin-top:8px;color:var(--muted);">
-                Спальные места: <b id="mBeds">—</b>
-              </div>
+            <div class="mTinyText">
+              <b id="mTinyName">—</b><br>
+              <span id="mTinyDesc">—</span>
             </div>
           </div>
 
@@ -578,6 +575,13 @@
 
           <div class="sectionTitle">Удобства</div>
           <div class="list" id="mAmen"></div>
+
+          <!-- NEW: завтраки -->
+          <div class="checkRow">
+            <input type="checkbox" id="mBreakfast">
+            <div class="lbl">Завтраки</div>
+            <div class="hint" id="mBreakfastHint">не выбрано</div>
+          </div>
 
           <div class="sectionTitle">Расчёт по ночам</div>
           <div class="breakdown" id="mBreakdown"></div>
@@ -611,12 +615,6 @@
                 <input id="comment" placeholder="Буду поздно, выпивший..." />
               </div>
             </div>
-
-            <label style="display:flex;gap:10px;align-items:center;margin-top:6px;">
-              <input type="checkbox" id="breakfastToggle" style="width:auto;transform:scale(1.1);" />
-              <span>Добавить завтраки (доп.)</span>
-            </label>
-            <div class="mini" id="mBreakfastLine"></div>
 
             <div class="note">
               После нажатия «Перейти к оплате»:
