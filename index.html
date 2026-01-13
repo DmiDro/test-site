@@ -400,6 +400,23 @@
   max-height:calc(92vh - 56px);
 }
 
+/* ✅ отступы внутри модалки */
+.modalBody{
+  padding:16px;
+}
+
+/* ✅ чтобы контент не лип к краям и выглядел как блоки */
+.modalBody .left,
+.modalBody .right{
+  padding:16px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;
+  background: rgba(0,0,0,.10);
+}
+
+/* чтобы между левым блоком и формой был воздух */
+.modalBody .left{ margin-bottom:14px; }
+
 
     /* NEW: маленькое фото-значок в модалке */
     .mTinyRow{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
@@ -473,6 +490,22 @@
     }
 
 
+@media (max-width: 620px){
+  /* MODAL */
+  .modalBody{ padding:12px; }
+  .modalBody .left,
+  .modalBody .right{ padding:12px; }
+  .kv{ grid-template-columns:1fr; }
+  .right .two{ grid-template-columns:1fr; }
+
+  /* PAGE */
+  .wrap{ margin: 18px auto 56px; }
+  header{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
 
 
 @media (max-width: 980px){
@@ -482,13 +515,8 @@
   .grid{ grid-template-columns: repeat(2,1fr); }
 }
 
-@media (max-width: 620px){
-  .wrap{ margin: 18px auto 56px; }
-  header{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
+
+
   .brand{
     align-items: flex-start;
     gap: 10px;
