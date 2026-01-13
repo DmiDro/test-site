@@ -12,7 +12,7 @@
 
   <style>
     :root{
-      /* Гамма телеграмм black */
+      /* Гамма телеграмм black*/
       --bg:#323a42;
       --text:#e6edf3;
       --muted:#8b949e;
@@ -112,7 +112,6 @@
 
     h1{margin:0;font-size:22px;letter-spacing:.2px;font-family:var(--font-title);font-weight:700;}
     .sub{margin:6px 0 0;color:var(--muted);font-size:14px;max-width:64ch;}
-
     .pill{
       display:inline-flex;align-items:center;gap:8px;
       padding:10px 12px;border:1px solid var(--line);
@@ -194,14 +193,12 @@
     .heroAside .row{display:flex;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap;}
     .heroAside .tag{border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.10);}
 
-    /* CONTROLS (десктоп: одним рядом) */
+    /* CONTROLS */
     .controls{
       display:grid;
-      grid-template-columns:1.2fr 1.2fr .9fr .9fr auto;
-      gap:12px;
-      align-items:end;
-      padding:14px;
-      border:1px solid var(--line);
+      grid-template-columns:1.2fr 1.2fr .9fr .9fr auto; /* ✅ десктоп: один ряд */
+      gap:12px;align-items:end;
+      padding:14px;border:1px solid var(--line);
       background:rgba(255,255,255,.10);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
@@ -230,8 +227,12 @@
     }
     button:disabled{opacity:.55;cursor:not-allowed;}
 
-    /* CARDS (десктоп: 3 колонки -> 2 ряда по 3, если 6 комнат) */
-    .grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:14px;}
+    /* CARDS */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr)); /* ✅ десктоп: 3 колонки -> 2 ряда по 3 */
+      gap:14px;
+    }
 
     .card{
       border:1px solid var(--line);
@@ -411,6 +412,7 @@
       border-radius:16px;
       background: rgba(0,0,0,.10);
     }
+
     .modalBody .left{ margin-bottom:14px; }
 
     /* маленькое фото-значок в модалке */
@@ -429,7 +431,6 @@
     .kv .item{padding:10px 12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(0,0,0,.14);}
     .kv .k{color:var(--muted);font-size:12px;}
     .kv .v{margin-top:4px;font-weight:800;color:var(--text);}
-
     .sectionTitle{
       margin:16px 0 10px;
       font-size:12px;color:var(--muted);
@@ -449,7 +450,6 @@
     .breakdown .brow{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.16);font-size:13px;color:var(--muted);}
     .breakdown .brow:last-child{border-bottom:none;}
     .breakdown b{color:var(--text);}
-
     .toast{
       position:fixed;right:18px;bottom:18px;max-width:380px;
       padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.22);
@@ -479,10 +479,10 @@
     .checkRow .hint{color:var(--muted);font-size:12px;margin-left:auto;text-align:right;}
 
     /* =========================
-       RESPONSIVE
+       RESPONSIVE — медиа подряд
        ========================= */
 
-    /* планшет/малый ноут: 2 колонки карточек, контролы в 2 колонки */
+    /* <= 980px */
     @media (max-width: 980px){
       .heroInner{ grid-template-columns:1fr; }
 
@@ -491,12 +491,11 @@
 
       .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
 
-      /* на узких экранах удобнее чтобы фото сверху */
       .cardTop{ grid-template-columns: 1fr; }
       .cGallery{ aspect-ratio: 16 / 10; }
     }
 
-    /* мобильная: как было (одна колонка) */
+    /* <= 620px */
     @media (max-width: 620px){
       /* MODAL */
       .modalBody{ padding:12px; }
@@ -513,12 +512,11 @@
         gap: 10px;
       }
 
-      /* то, что у тебя случайно влияло на десктоп — теперь только на мобиле */
       .brand{ align-items:flex-start; gap:10px; }
-      .logo{ border-radius:12px; }
-      h1{ font-size:18px; line-height:1.15; }
-      .sub{ font-size:12px; line-height:1.35; max-width:100%; }
-      .pill{ align-self:flex-start; max-width:100%; white-space:normal; }
+      .logo{ border-radius: 12px; }
+      h1{ font-size: 18px; line-height: 1.15; }
+      .sub{ font-size: 12px; line-height: 1.35; max-width: 100%; }
+      .pill{ align-self: flex-start; max-width: 100%; white-space: normal; }
 
       .hero{ padding: 26px 18px; border-radius: 18px; }
       .heroTitle{ font-size: 26px; line-height: 1.12; max-width: 100%; }
@@ -613,7 +611,6 @@
 
       <div class="modalBody">
         <div class="left">
-          <!-- маленькое фото + краткое описание -->
           <div class="mTinyRow">
             <div class="mTinyPhoto" id="mTinyPhotoWrap" aria-hidden="true">
               <img id="mTinyPhoto" alt="">
@@ -624,7 +621,6 @@
             </div>
           </div>
 
-          <!-- инфо -->
           <div class="kv">
             <div class="item"><div class="k">Даты</div><div class="v" id="mDates">—</div></div>
             <div class="item"><div class="k">Гости</div><div class="v" id="mGuests">—</div></div>
@@ -635,7 +631,6 @@
           <div class="sectionTitle">Удобства</div>
           <div class="list" id="mAmen"></div>
 
-          <!-- завтраки -->
           <div class="checkRow">
             <input type="checkbox" id="mBreakfast">
             <div class="lbl">Завтраки</div>
@@ -654,7 +649,6 @@
           </div>
         </div>
 
-        <!-- форма снизу -->
         <div class="right">
           <form id="form">
             <div class="two">
@@ -692,7 +686,7 @@
         </div>
       </div>
     </div>
-  </div> <!-- overlay -->
+  </div>
 
   <div class="toast" id="toast"></div>
 
