@@ -12,7 +12,7 @@
 
   <style>
     :root{
-      /* Гамма телеграмм black*/
+      /* Гамма телеграмм black */
       --bg:#323a42;
       --text:#e6edf3;
       --muted:#8b949e;
@@ -92,6 +92,7 @@
       box-shadow:var(--shadow);
       cursor:pointer;
       position:relative;
+      flex:0 0 auto;
     }
     .logo::after{
       content:"☀";
@@ -111,6 +112,7 @@
 
     h1{margin:0;font-size:22px;letter-spacing:.2px;font-family:var(--font-title);font-weight:700;}
     .sub{margin:6px 0 0;color:var(--muted);font-size:14px;max-width:64ch;}
+
     .pill{
       display:inline-flex;align-items:center;gap:8px;
       padding:10px 12px;border:1px solid var(--line);
@@ -119,16 +121,15 @@
     }
     .pill b{color:var(--text);font-weight:700;}
 
-.bedsLine{
-  margin:6px 0 0;
-  font-size:12px;
-  color:var(--muted);
-  opacity:.95;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
+    .bedsLine{
+      margin:6px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      opacity:.95;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
 
     /* HERO */
     .hero{
@@ -168,18 +169,17 @@
     }
     .heroText em{font-style:normal;color:var(--text);}
 
-.tagBtn{
-  border:1px solid var(--line);
-  padding:6px 10px;
-  border-radius:999px;
-  background:rgba(0,0,0,.10);
-  color:var(--text);
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:none;
-}
-.tagBtn:hover{ border-color: var(--accent); }
-
+    .tagBtn{
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.10);
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:none;
+    }
+    .tagBtn:hover{ border-color: var(--accent); }
 
     .heroAside{
       border:1px solid var(--line);
@@ -194,11 +194,14 @@
     .heroAside .row{display:flex;justify-content:space-between;gap:10px;margin-top:8px;flex-wrap:wrap;}
     .heroAside .tag{border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.10);}
 
-    /* CONTROLS */
+    /* CONTROLS (десктоп: одним рядом) */
     .controls{
-      display:grid;grid-template-columns:1.2fr 1.2fr .9fr .9fr auto;
-      gap:12px;align-items:end;
-      padding:14px;border:1px solid var(--line);
+      display:grid;
+      grid-template-columns:1.2fr 1.2fr .9fr .9fr auto;
+      gap:12px;
+      align-items:end;
+      padding:14px;
+      border:1px solid var(--line);
       background:rgba(255,255,255,.10);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
@@ -227,8 +230,8 @@
     }
     button:disabled{opacity:.55;cursor:not-allowed;}
 
-    /* CARDS */
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    /* CARDS (десктоп: 3 колонки -> 2 ряда по 3, если 6 комнат) */
+    .grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:14px;}
 
     .card{
       border:1px solid var(--line);
@@ -241,7 +244,7 @@
     }
     .card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.55);}
 
-    /* NEW: верх карточки — фото слева, описание справа */
+    /* верх карточки — фото слева, описание справа */
     .cardTop{
       display:grid;
       grid-template-columns: 1fr 1.2fr;
@@ -250,14 +253,14 @@
       align-items:stretch;
     }
 
-    /* NEW: слайдер на карточке */
+    /* слайдер на карточке */
     .cGallery{
       position:relative;
       border:1px solid var(--line);
       border-radius:14px;
       overflow:hidden;
       background: rgba(0,0,0,.12);
-      aspect-ratio: 1 / 1;     /* квадрат */
+      aspect-ratio: 1 / 1;
     }
     .cImg{
       width:100%;
@@ -363,15 +366,15 @@
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px;}
     .overlay.show{display:flex;}
 
-.modal{
-  width:min(1120px,100%);     /* было 940px */
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.26);
-  background:#06293d;
-  box-shadow:0 30px 80px rgba(0,0,0,.55);
-  overflow:hidden;
-  max-height:92vh;
-}
+    .modal{
+      width:min(1120px,100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.26);
+      background:#06293d;
+      box-shadow:0 30px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+      max-height:92vh;
+    }
 
     .modalHead{
       display:flex;align-items:center;justify-content:space-between;
@@ -394,31 +397,23 @@
     }
     .x:hover{ border-color: var(--accent); }
 
-.modalBody{
-  display:block;                 /* вместо grid */
-  overflow:auto;
-  max-height:calc(92vh - 56px);
-}
+    .modalBody{
+      display:block;
+      overflow:auto;
+      max-height:calc(92vh - 56px);
+      padding:16px;
+    }
 
-/* ✅ отступы внутри модалки */
-.modalBody{
-  padding:16px;
-}
+    .modalBody .left,
+    .modalBody .right{
+      padding:16px;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:16px;
+      background: rgba(0,0,0,.10);
+    }
+    .modalBody .left{ margin-bottom:14px; }
 
-/* ✅ чтобы контент не лип к краям и выглядел как блоки */
-.modalBody .left,
-.modalBody .right{
-  padding:16px;
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:16px;
-  background: rgba(0,0,0,.10);
-}
-
-/* чтобы между левым блоком и формой был воздух */
-.modalBody .left{ margin-bottom:14px; }
-
-
-    /* NEW: маленькое фото-значок в модалке */
+    /* маленькое фото-значок в модалке */
     .mTinyRow{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
     .mTinyPhoto{
       width:64px;height:64px;border-radius:14px;overflow:hidden;
@@ -434,6 +429,7 @@
     .kv .item{padding:10px 12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(0,0,0,.14);}
     .kv .k{color:var(--muted);font-size:12px;}
     .kv .v{margin-top:4px;font-weight:800;color:var(--text);}
+
     .sectionTitle{
       margin:16px 0 10px;
       font-size:12px;color:var(--muted);
@@ -453,6 +449,7 @@
     .breakdown .brow{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.16);font-size:13px;color:var(--muted);}
     .breakdown .brow:last-child{border-bottom:none;}
     .breakdown b{color:var(--text);}
+
     .toast{
       position:fixed;right:18px;bottom:18px;max-width:380px;
       padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.22);
@@ -468,7 +465,7 @@
       font-weight:900;
     }
 
-    /* NEW: чекбокс завтрака */
+    /* чекбокс завтрака */
     .checkRow{
       display:flex;align-items:center;gap:10px;
       padding:10px 12px;
@@ -481,70 +478,61 @@
     .checkRow .lbl{color:var(--text);font-weight:800;}
     .checkRow .hint{color:var(--muted);font-size:12px;margin-left:auto;text-align:right;}
 
-    /* RESPONSIVE */
+    /* =========================
+       RESPONSIVE
+       ========================= */
+
+    /* планшет/малый ноут: 2 колонки карточек, контролы в 2 колонки */
     @media (max-width: 980px){
       .heroInner{ grid-template-columns:1fr; }
+
       .controls{ grid-template-columns: 1fr 1fr; }
       .controls .cta{ grid-column: 1 / -1; }
-      .grid{ grid-template-columns: repeat(2,1fr); }
+
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+
+      /* на узких экранах удобнее чтобы фото сверху */
+      .cardTop{ grid-template-columns: 1fr; }
+      .cGallery{ aspect-ratio: 16 / 10; }
     }
 
+    /* мобильная: как было (одна колонка) */
+    @media (max-width: 620px){
+      /* MODAL */
+      .modalBody{ padding:12px; }
+      .modalBody .left,
+      .modalBody .right{ padding:12px; }
+      .kv{ grid-template-columns:1fr; }
+      .right .two{ grid-template-columns:1fr; }
 
-@media (max-width: 620px){
-  /* MODAL */
-  .modalBody{ padding:12px; }
-  .modalBody .left,
-  .modalBody .right{ padding:12px; }
-  .kv{ grid-template-columns:1fr; }
-  .right .two{ grid-template-columns:1fr; }
+      /* PAGE */
+      .wrap{ margin: 18px auto 56px; }
+      header{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
 
-  /* PAGE */
-  .wrap{ margin: 18px auto 56px; }
-  header{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-}
+      /* то, что у тебя случайно влияло на десктоп — теперь только на мобиле */
+      .brand{ align-items:flex-start; gap:10px; }
+      .logo{ border-radius:12px; }
+      h1{ font-size:18px; line-height:1.15; }
+      .sub{ font-size:12px; line-height:1.35; max-width:100%; }
+      .pill{ align-self:flex-start; max-width:100%; white-space:normal; }
 
+      .hero{ padding: 26px 18px; border-radius: 18px; }
+      .heroTitle{ font-size: 26px; line-height: 1.12; max-width: 100%; }
+      .heroText{ font-size: 14px; line-height: 1.55; }
+      .heroAside{ margin-top: 10px; }
 
-@media (max-width: 980px){
-  .heroInner{ grid-template-columns:1fr; }
-  .controls{ grid-template-columns: 1fr 1fr; }
-  .controls .cta{ grid-column: 1 / -1; }
-  .grid{ grid-template-columns: repeat(2,1fr); }
-}
+      .controls{ grid-template-columns: 1fr; }
+      .controls .cta{ grid-column: 1 / -1; }
 
+      .grid{ grid-template-columns: 1fr; }
 
-
-  .brand{
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .logo{
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    flex: 0 0 auto;
-  }
-  h1{ font-size: 18px; line-height: 1.15; }
-  .sub{ font-size: 12px; line-height: 1.35; max-width: 100%; }
-  .pill{ align-self: flex-start; max-width: 100%; white-space: normal; }
-  .hero{ padding: 26px 18px; border-radius: 18px; }
-  .heroTitle{ font-size: 26px; line-height: 1.12; max-width: 100%; }
-  .heroText{ font-size: 14px; line-height: 1.55; }
-  .heroAside{ margin-top: 10px; }
-  .controls{ grid-template-columns: 1fr; }
-  .controls .cta{ grid-column: 1 / -1; }
-  .grid{ grid-template-columns: 1fr; }
-
-  .cardTop{ grid-template-columns: 1fr; }
-  .cGallery{ aspect-ratio: 16 / 10; }
-}
-
-
-
-
+      .cardTop{ grid-template-columns: 1fr; }
+      .cGallery{ aspect-ratio: 16 / 10; }
+    }
   </style>
 </head>
 
@@ -576,15 +564,13 @@
           Заезд 15:00 • Выезд 12:00<br>
           Холд брони: 15 минут (PENDING)
 
-<div class="row" style="margin-top:12px;">
-  <span class="tag">Море</span>
-  <span class="tag">Солнце</span>
-  <span class="tag">Пляж</span>
-  <button class="tagBtn" type="button" id="btnContacts">Контакты</button>
-  <button class="tagBtn" type="button" id="btnBanya">Баня</button>
-</div>
-
-
+          <div class="row" style="margin-top:12px;">
+            <span class="tag">Море</span>
+            <span class="tag">Солнце</span>
+            <span class="tag">Пляж</span>
+            <button class="tagBtn" type="button" id="btnContacts">Контакты</button>
+            <button class="tagBtn" type="button" id="btnBanya">Баня</button>
+          </div>
         </aside>
       </div>
     </section>
@@ -618,7 +604,7 @@
     <div class="grid" id="grid"></div>
   </div>
 
-   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Оформление бронирования">
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Оформление бронирования">
     <div class="modal">
       <div class="modalHead">
         <h3 id="mTitle">Оформление</h3>
@@ -706,9 +692,9 @@
         </div>
       </div>
     </div>
-  </div> <!-- ✅ overlay закрыт -->
+  </div> <!-- overlay -->
 
-  <div class="toast" id="toast"></div> <!-- ✅ теперь тост вне overlay -->
+  <div class="toast" id="toast"></div>
 
   <!-- DATA -->
   <script src="./data/room_types.js"></script>
