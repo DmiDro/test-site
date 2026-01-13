@@ -167,6 +167,20 @@
       line-height:1.65;
     }
     .heroText em{font-style:normal;color:var(--text);}
+
+.tagBtn{
+  border:1px solid var(--line);
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(0,0,0,.10);
+  color:var(--text);
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:none;
+}
+.tagBtn:hover{ border-color: var(--accent); }
+
+
     .heroAside{
       border:1px solid var(--line);
       background:rgba(255,255,255,.10);
@@ -381,12 +395,11 @@
     .x:hover{ border-color: var(--accent); }
 
 .modalBody{
-  display:grid;
-  grid-template-columns:1.25fr .75fr;  /* левый блок шире */
-  gap:0;
+  display:block;                 /* вместо grid */
   overflow:auto;
   max-height:calc(92vh - 56px);
 }
+
 
     /* NEW: маленькое фото-значок в модалке */
     .mTinyRow{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
@@ -458,43 +471,52 @@
       .controls .cta{ grid-column: 1 / -1; }
       .grid{ grid-template-columns: repeat(2,1fr); }
     }
-    @media (max-width: 860px){
-      .left{
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,.20);
-      }
-    }
-    @media (max-width: 620px){
-      .wrap{ margin: 18px auto 56px; }
-      header{
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .brand{
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .logo{
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        flex: 0 0 auto;
-      }
-      h1{ font-size: 18px; line-height: 1.15; }
-      .sub{ font-size: 12px; line-height: 1.35; max-width: 100%; }
-      .pill{ align-self: flex-start; max-width: 100%; white-space: normal; }
-      .hero{ padding: 26px 18px; border-radius: 18px; }
-      .heroTitle{ font-size: 26px; line-height: 1.12; max-width: 100%; }
-      .heroText{ font-size: 14px; line-height: 1.55; }
-      .heroAside{ margin-top: 10px; }
-      .controls{ grid-template-columns: 1fr; }
-      .controls .cta{ grid-column: 1 / -1; }
-      .grid{ grid-template-columns: 1fr; }
 
-      .cardTop{ grid-template-columns: 1fr; }
-      .cGallery{ aspect-ratio: 16 / 10; } /* на мобиле пусть шире */
-    }
+
+
+
+@media (max-width: 980px){
+  .heroInner{ grid-template-columns:1fr; }
+  .controls{ grid-template-columns: 1fr 1fr; }
+  .controls .cta{ grid-column: 1 / -1; }
+  .grid{ grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 620px){
+  .wrap{ margin: 18px auto 56px; }
+  header{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .brand{
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .logo{
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+  }
+  h1{ font-size: 18px; line-height: 1.15; }
+  .sub{ font-size: 12px; line-height: 1.35; max-width: 100%; }
+  .pill{ align-self: flex-start; max-width: 100%; white-space: normal; }
+  .hero{ padding: 26px 18px; border-radius: 18px; }
+  .heroTitle{ font-size: 26px; line-height: 1.12; max-width: 100%; }
+  .heroText{ font-size: 14px; line-height: 1.55; }
+  .heroAside{ margin-top: 10px; }
+  .controls{ grid-template-columns: 1fr; }
+  .controls .cta{ grid-column: 1 / -1; }
+  .grid{ grid-template-columns: 1fr; }
+
+  .cardTop{ grid-template-columns: 1fr; }
+  .cGallery{ aspect-ratio: 16 / 10; }
+}
+
+
+
+
   </style>
 </head>
 
@@ -525,11 +547,16 @@
           <b>Правила</b><br>
           Заезд 15:00 • Выезд 12:00<br>
           Холд брони: 15 минут (PENDING)
-          <div class="row" style="margin-top:12px;">
-            <span class="tag">Море</span>
-            <span class="tag">Солнце</span>
-            <span class="tag">Пляж</span>
-          </div>
+
+<div class="row" style="margin-top:12px;">
+  <span class="tag">Море</span>
+  <span class="tag">Солнце</span>
+  <span class="tag">Пляж</span>
+  <button class="tagBtn" type="button" id="btnContacts">Контакты</button>
+  <button class="tagBtn" type="button" id="btnBanya">Баня</button>
+</div>
+
+
         </aside>
       </div>
     </section>
@@ -564,25 +591,95 @@
   </div>
 
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Оформление бронирования">
-    <div class="modal">
-      <div class="modalHead">
-        <h3 id="mTitle">Оформление</h3>
-        <button class="x" id="btnClose" aria-label="Закрыть" title="Закрыть">✕</button>
+
+
+<div class="modal">
+  <div class="modalHead">
+    <h3 id="mTitle">Оформление</h3>
+    <button class="x" id="btnClose" aria-label="Закрыть" title="Закрыть">✕</button>
+  </div>
+
+  <div class="modalBody">
+    <div class="left">
+      <!-- маленькое фото + краткое описание -->
+      <div class="mTinyRow">
+        <div class="mTinyPhoto" id="mTinyPhotoWrap" aria-hidden="true">
+          <img id="mTinyPhoto" alt="">
+        </div>
+        <div class="mTinyText">
+          <b id="mTinyName">—</b><br>
+          <span id="mTinyDesc">—</span>
+        </div>
       </div>
 
-      <div class="modalBody">
-        <div class="left">
+      <!-- инфо -->
+      <div class="kv">
+        <div class="item"><div class="k">Даты</div><div class="v" id="mDates">—</div></div>
+        <div class="item"><div class="k">Гости</div><div class="v" id="mGuests">—</div></div>
+        <div class="item"><div class="k">Свободно</div><div class="v" id="mAvail">—</div></div>
+        <div class="item"><div class="k">Мин. ночей</div><div class="v" id="mMin">—</div></div>
+      </div>
 
-          <!-- NEW: маленькое фото + краткое описание -->
-          <div class="mTinyRow">
-            <div class="mTinyPhoto" id="mTinyPhotoWrap" aria-hidden="true">
-              <img id="mTinyPhoto" alt="">
-            </div>
-            <div class="mTinyText">
-              <b id="mTinyName">—</b><br>
-              <span id="mTinyDesc">—</span>
-            </div>
+      <div class="sectionTitle">Удобства</div>
+      <div class="list" id="mAmen"></div>
+
+      <!-- завтраки -->
+      <div class="checkRow">
+        <input type="checkbox" id="mBreakfast">
+        <div class="lbl">Завтраки</div>
+        <div class="hint" id="mBreakfastHint">не выбрано</div>
+      </div>
+
+      <div class="sectionTitle">Расчёт по ночам</div>
+      <div class="breakdown" id="mBreakdown"></div>
+
+      <div class="sectionTitle">Итого</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div class="note">Оплата в прототипе не настоящая: кнопка создаёт «PENDING» бронь и показывает подтверждение.</div>
+        <div class="price"><b id="mTotal">—</b> ₽</div>
+      </div>
+    </div>
+
+    <!-- форма снизу -->
+    <div class="right">
+      <form id="form">
+        <div class="two">
+          <div>
+            <label>Имя и фамилия</label>
+            <input id="fullName" required placeholder="Александр Кирпичников" />
           </div>
+          <div>
+            <label>Телефон</label>
+            <input id="phone" required placeholder="+7 ..." />
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <label>Email</label>
+            <input id="email" required type="email" placeholder="mail@example.com" />
+          </div>
+          <div>
+            <label>Комментарий</label>
+            <input id="comment" placeholder="Буду поздно, выпивший..." />
+          </div>
+        </div>
+
+        <div class="note">
+          После нажатия «Перейти к оплате»:
+          <div class="mini">• создаётся бронь <b>PENDING</b> с холдом на 15 минут</div>
+          <div class="mini">• в реальном проекте здесь открывается Stripe/YooKassa</div>
+        </div>
+
+        <button class="payBtn" type="submit" id="btnPay">Перейти к оплате</button>
+        <div class="mini" id="mWarn"></div>
+        <button type="button" class="x xBottom" id="btnCloseBottom">Вернуться</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
           <div class="kv">
             <div class="item"><div class="k">Даты</div><div class="v" id="mDates">—</div></div>

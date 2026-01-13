@@ -539,4 +539,13 @@ el("form").addEventListener("submit",(e)=>{
     rates: RATES?.length,
     inventory: Object.keys(INVENTORY||{}).length
   });
+// hero buttons
+document.getElementById("btnContacts")?.addEventListener("click", ()=>{
+  showToast("Контакты: +7 (___) ___-__-__ • mail@example.com");
+});
+
+document.getElementById("btnBanya")?.addEventListener("click", ()=>{
+  showToast("Баня: уточнить расписание и стоимость (демо).");
+});
+
 })();
