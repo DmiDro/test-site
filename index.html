@@ -119,6 +119,17 @@
     }
     .pill b{color:var(--text);font-weight:700;}
 
+.bedsLine{
+  margin:6px 0 0;
+  font-size:12px;
+  color:var(--muted);
+  opacity:.95;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+
     /* HERO */
     .hero{
       position:relative;
@@ -337,15 +348,17 @@
     /* MODAL */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px;}
     .overlay.show{display:flex;}
-    .modal{
-      width:min(940px,100%);
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.26);
-      background:#06293d;
-      box-shadow:0 30px 80px rgba(0,0,0,.55);
-      overflow:hidden;
-      max-height:92vh;
-    }
+
+.modal{
+  width:min(1120px,100%);     /* было 940px */
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.26);
+  background:#06293d;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+  max-height:92vh;
+}
+
     .modalHead{
       display:flex;align-items:center;justify-content:space-between;
       padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.22);
@@ -366,9 +379,14 @@
       cursor:pointer;
     }
     .x:hover{ border-color: var(--accent); }
-    .modalBody{display:grid;grid-template-columns:1.1fr .9fr;gap:0; overflow:auto; max-height:calc(92vh - 56px);}
-    .left,.right{padding:16px;}
-    .left{border-right:1px solid rgba(255,255,255,.20);}
+
+.modalBody{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;  /* левый блок шире */
+  gap:0;
+  overflow:auto;
+  max-height:calc(92vh - 56px);
+}
 
     /* NEW: маленькое фото-значок в модалке */
     .mTinyRow{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}

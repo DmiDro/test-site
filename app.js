@@ -241,6 +241,8 @@ function renderCards(){
             <span class="badge">${badgeText}</span>
           </div>
           <div class="desc">${t.desc || ""}</div>
+          ${t.beds_desc ? `<div class="bedsLine">${t.beds_desc}</div>` : ``}
+
 
           <div class="meta">
             ${(t.amen||[]).slice(0,5).map(x=>`<span class="chip">${x}</span>`).join("")}
