@@ -1,6 +1,4 @@
-/* ===============================
-   app.js — точка входа логики
-   =============================== */
+/* app.js — точка входа логики */
 
 // берём данные, которые уже положены в window
 const ROOM_TYPES = window.ROOM_TYPES;
@@ -15,6 +13,57 @@ if (!ROOM_TYPES || !RATES) {
 
 function primaryPhoto(t){
   return (t.photos && t.photos.length) ? t.photos[0] : null;
+}
+
+function mountCardSlider(card, photos){
+  if(!Array.isArray(photos) || photos.length === 0) return;
+
+  const img  = card.querySelector(".cImg");
+  const prev = card.querySelector(".cPrev");
+  const next = card.querySelector(".cNext");
+  const dots = card.querySelector(".cDots");
+  if(!img || !prev || !next || !dots) return;
+
+  let i = 0;
+
+  function render(){
+    img.src = photos[i];
+    prev.style.display = photos.length > 1 ? "flex" : "none";
+    next.style.display = photos.length > 1 ? "flex" : "none";
+    dots.innerHTML = photos.map((_, idx) =>
+      `<button type="button" class="gDot ${idx===i?'active':''}" data-i="${idx}" aria-label="Фото ${idx+1}"></button>`
+    ).join("");
+  }
+
+  function go(delta){
+    if(photos.length < 2) return;
+    i = (i + delta + photos.length) % photos.length;
+    render();
+  }
+
+  prev.onclick = ()=>go(-1);
+  next.onclick = ()=>go(1);
+
+  dots.onclick = (e)=>{
+    const b = e.target.closest("button[data-i]");
+    if(!b) return;
+    const idx = Number(b.dataset.i);
+    if(Number.isFinite(idx)){ i = idx; render(); }
+  };
+
+  // свайп по картинке (мобила)
+  let startX = null;
+  img.ontouchstart = (e)=>{ startX = e.touches?.[0]?.clientX ?? null; };
+  img.ontouchend = (e)=>{
+    if(startX === null) return;
+    const endX = e.changedTouches?.[0]?.clientX ?? null;
+    if(endX === null) return;
+    const dx = endX - startX;
+    if(Math.abs(dx) > 35) go(dx > 0 ? -1 : 1);
+    startX = null;
+  };
+
+  render();
 }
 
 function pad2(n){ return String(n).padStart(2,'0'); }
@@ -110,7 +159,7 @@ const toast      = el("toast");
 const st = {
   checkIn:"",
   checkOut:"",
-  adults:2,
+  adults:1,
   kids:0,
   selected:null,
   computed:null
@@ -124,118 +173,56 @@ function showToast(msg){
   setTimeout(()=>toast.classList.remove("show"), 2800);
 }
 
-/* ===== gallery ===== */
-
-let gPhotos = [];
-let gIndex  = 0;
-
-function setGallery(photos){
-  gPhotos = Array.isArray(photos) ? photos : [];
-  gIndex  = 0;
-
-  const img  = el("gImg");
-  const dots = el("gDots");
-  const prev = el("gPrev");
-  const next = el("gNext");
-  if(!img || !dots || !prev || !next) return;
-
-  function render(){
-    if(!gPhotos.length){
-      img.removeAttribute("src");
-      dots.innerHTML = "";
-      prev.style.display = "none";
-      next.style.display = "none";
-      return;
-    }
-
-    img.src = gPhotos[gIndex];
-    prev.style.display = gPhotos.length > 1 ? "flex" : "none";
-    next.style.display = gPhotos.length > 1 ? "flex" : "none";
-
-    dots.innerHTML = gPhotos.map((_, i) =>
-      `<button type="button" class="gDot ${i===gIndex?'active':''}" data-i="${i}" aria-label="Фото ${i+1}"></button>`
-    ).join("");
-  }
-
-  function go(delta){
-    if(gPhotos.length < 2) return;
-    gIndex = (gIndex + delta + gPhotos.length) % gPhotos.length;
-    render();
-  }
-
-  prev.onclick = ()=>go(-1);
-  next.onclick = ()=>go(1);
-
-  dots.onclick = (e)=>{
-    const b = e.target.closest(".gDot");
-    if(!b) return;
-    const i = Number(b.dataset.i);
-    if(Number.isFinite(i)){
-      gIndex = i;
-      render();
-    }
-  };
-
-  // swipe
-  let startX = null;
-  img.ontouchstart = (e)=>{ startX = e.touches?.[0]?.clientX ?? null; };
-  img.ontouchend = (e)=>{
-    if(startX === null) return;
-    const endX = e.changedTouches?.[0]?.clientX ?? null;
-    if(endX === null) return;
-    const dx = endX - startX;
-    if(Math.abs(dx) > 35) go(dx > 0 ? -1 : 1);
-    startX = null;
-  };
-
-  render();
-}
-
 /* ===== cards render ===== */
 
 function renderCards(){
-  grid.innerHTML="";
+  grid.innerHTML = "";
 
   const can = st.checkIn && st.checkOut && nightsBetween(st.checkIn, st.checkOut) > 0;
   const nights = can ? nightsBetween(st.checkIn, st.checkOut) : 0;
 
   for(const t of ROOM_TYPES){
-    const fit   = st.adults <= t.capA && st.kids <= t.capK;
-    const avail = (can && fit) ? availableCount(t.id, st.checkIn, st.checkOut) : 0;
+    const guests = st.adults + st.kids;
+    const beds = Number(t.beds_total || 0);
+
+    // если даты выбраны — неподходящие по спальным местам вообще не показываем
+    if(can && beds > 0 && guests > beds) continue;
+
+    const avail = can ? availableCount(t.id, st.checkIn, st.checkOut) : 0;
     const price = can ? computePrice(t.id, t.base, st.checkIn, st.checkOut) : null;
 
-    const p0 = primaryPhoto(t);
+    const disabled = (!can || avail <= 0 || nights < t.min);
 
-    const thumbStyle = p0
-      ? `
-        background-image:
-          linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
-          radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%),
-          url('${p0}');
-        background-size: cover;
-        background-position: center;
-      `
-      : "";
+    const card = document.createElement("div");
+    card.className = "card";
 
-    const card=document.createElement("div");
-    card.className="card";
-
-    const disabled = (!can || !fit || avail<=0 || nights < t.min);
-
-    card.innerHTML=`
-      <div class="thumb" style="${thumbStyle}">
-        ${p0 ? `<span class="thumbLabel">${t.name}</span>` : t.name}
+    card.innerHTML = `
+      <div class="thumb thumbCard">
+        ${
+          (t.photos && t.photos.length)
+            ? `
+              <button class="gNav gPrev cPrev" type="button" aria-label="Предыдущее фото">‹</button>
+              <img class="gImg cImg" alt="Фото номера" />
+              <button class="gNav gNext cNext" type="button" aria-label="Следующее фото">›</button>
+              <div class="gDots cDots"></div>
+              <div class="thumbLabelLite">${t.name}</div>
+            `
+            : `<span class="thumbLabel">${t.name}</span>`
+        }
       </div>
 
       <div class="content">
         <div class="title">
           <h2>${t.name}</h2>
-          <span class="badge">${t.capA} взр + ${t.capK} дет</span>
+          <span class="badge">${beds ? `${beds} мест` : "—"}</span>
         </div>
-        <div class="desc">${t.desc}</div>
+
+        <div class="desc">${t.desc || ""}</div>
+
         <div class="meta">
-          ${t.amen.slice(0,5).map(x=>`<span class="chip">${x}</span>`).join("")}
+          ${(t.amen || []).slice(0,5).map(x=>`<span class="chip">${x}</span>`).join("")}
         </div>
+
         <div class="row">
           <div class="price">${
             can
@@ -244,15 +231,13 @@ function renderCards(){
           }</div>
           <div class="avail">Доступно: <b>${can ? avail : "—"}</b></div>
         </div>
+
         <button class="action" ${disabled ? "disabled" : ""}>
           ${(!can)
             ? "Выбери даты"
-            : (!fit
-              ? "Не подходит по гостям"
-              : (nights < t.min
-                ? `Мин. ночей: ${t.min}`
-                : (avail<=0 ? "Нет мест" : "Выбрать комнату")
-              )
+            : (nights < t.min
+              ? `Мин. ночей: ${t.min}`
+              : (avail<=0 ? "Нет мест" : "Выбрать комнату")
             )
           }
         </button>
@@ -264,6 +249,7 @@ function renderCards(){
       actionBtn.addEventListener("click", ()=>openModal(t));
     }
 
+    mountCardSlider(card, t.photos || []);
     grid.appendChild(card);
   }
 }
@@ -276,69 +262,94 @@ el("btnClose").addEventListener("click", closeModal);
 el("btnCloseBottom").addEventListener("click", closeModal);
 overlay.addEventListener("click", (e)=>{ if(e.target===overlay) closeModal(); });
 
-// клавиатура: Esc закрыть, стрелки листают
-document.addEventListener("keydown", (e)=>{
-  if(!overlay.classList.contains("show")) return;
-
-  if(e.key === "Escape"){
-    e.preventDefault();
-    closeModal();
-    return;
-  }
-
-  if(!gPhotos || gPhotos.length < 2) return;
-
-  if(e.key === "ArrowLeft"){
-    e.preventDefault();
-    el("gPrev")?.click();
-  }
-  if(e.key === "ArrowRight"){
-    e.preventDefault();
-    el("gNext")?.click();
-  }
-});
-
 function openModal(t){
   const can = st.checkIn && st.checkOut && nightsBetween(st.checkIn, st.checkOut) > 0;
   if(!can) return;
 
   const nights = nightsBetween(st.checkIn, st.checkOut);
-  const fit    = st.adults <= t.capA && st.kids <= t.capK;
-  const avail  = fit ? availableCount(t.id, st.checkIn, st.checkOut) : 0;
-  const price  = computePrice(t.id, t.base, st.checkIn, st.checkOut);
+
+  const guests = st.adults + st.kids;
+  const beds = Number(t.beds_total || 0);
+  if(beds > 0 && guests > beds){
+    showToast("Слишком много гостей для этого номера.");
+    return;
+  }
+
+  const avail = availableCount(t.id, st.checkIn, st.checkOut);
+  const price = computePrice(t.id, t.base, st.checkIn, st.checkOut);
 
   st.selected = t;
-  st.computed = { nights, fit, avail, price };
+  st.computed = { nights, avail, price };
 
-  el("mTitle").textContent=`Оформление: ${t.name}`;
-  setGallery(t.photos || []);
+  el("mTitle").textContent = `Оформление: ${t.name}`;
 
-  el("mDates").textContent=`${st.checkIn} → ${st.checkOut} (${nights} ноч.)`;
-  el("mGuests").textContent=`${st.adults} взр. + ${st.kids} дет.`;
-  el("mAvail").innerHTML = avail>0
-    ? `<span class="ok">${avail} доступно</span>`
-    : `<span class="danger">нет мест</span>`;
-  el("mMin").textContent=t.min;
+  // маленькое превью
+  const thumb = el("mThumbImg");
+  if(thumb){
+    const p0 = primaryPhoto(t);
+    if(p0) thumb.src = p0; else thumb.removeAttribute("src");
+  }
 
-  el("mAmen").innerHTML = t.amen.map(x=>`<span class="chip">${x}</span>`).join("");
+  el("mDesc").textContent = t.desc || "";
+  el("mBeds").textContent = t.beds_desc ? `${t.beds_total} • ${t.beds_desc}` : String(t.beds_total || "—");
+
+  el("mDates").textContent  = `${st.checkIn} → ${st.checkOut} (${nights} ноч.)`;
+  el("mGuests").textContent = `${st.adults} взр. + ${st.kids} дет.`;
+  el("mAvail").innerHTML    = avail>0 ? `<span class="ok">${avail} доступно</span>` : `<span class="danger">нет мест</span>`;
+  el("mMin").textContent    = t.min;
+
+  el("mAmen").innerHTML = (t.amen || []).map(x=>`<span class="chip">${x}</span>`).join("");
 
   el("mBreakdown").innerHTML = price.breakdown.map(x=>`
     <div class="brow"><span>${x.date}</span><span><b>${x.price.toLocaleString("ru-RU")}</b> ₽</span></div>
   `).join("");
 
-  el("mTotal").textContent = price.total.toLocaleString("ru-RU");
+  // --- breakfast logic ---
+  const baseTotal = price.total;
+  const bfAdult = Number(t.breakfast_price_adult || 0);
+  const bfChild = Number(t.breakfast_price_child || 0);
+  const bfLine = el("mBreakfastLine");
+  const bfToggle = el("breakfastToggle");
 
+  function breakfastTotal(){
+    return nights * (st.adults * bfAdult + st.kids * bfChild);
+  }
+
+  function renderTotal(){
+    const addBf = !!bfToggle?.checked;
+    const bf = addBf ? breakfastTotal() : 0;
+    const total = baseTotal + bf;
+
+    el("mTotal").textContent = total.toLocaleString("ru-RU");
+
+    if(bfLine){
+      if(bfAdult || bfChild){
+        bfLine.textContent = addBf
+          ? `Завтраки: +${bf.toLocaleString("ru-RU")} ₽ (${nights} ноч.)`
+          : `Завтраки: ${bfAdult}₽/взр, ${bfChild}₽/дет (не выбрано)`;
+      } else {
+        bfLine.textContent = "Завтраки недоступны для этого типа.";
+      }
+    }
+  }
+
+  if(bfToggle){
+    bfToggle.checked = false;
+    bfToggle.onchange = renderTotal;
+  }
+  renderTotal();
+
+  // warn/disable pay
   const warn = el("mWarn");
-  warn.textContent="";
-  warn.className="mini";
+  warn.textContent = "";
+  warn.className = "mini";
 
   const btnPay = el("btnPay");
-  const disabled = (!fit || avail<=0 || nights < t.min);
+  const disabled = (avail<=0 || nights < t.min);
   btnPay.disabled = disabled;
 
   if(disabled){
-    if(!fit){ warn.textContent="Не проходит по вместимости."; warn.className="mini danger"; }
-    else if(avail<=0){ warn.textContent="На эти даты нет свободных комнат."; warn.className="mini danger"; }
+    if(avail<=0){ warn.textContent="На эти даты нет свободных комнат."; warn.className="mini danger"; }
     else if(nights < t.min){ warn.textContent=`Минимум ночей для этого типа: ${t.min}.`; warn.className="mini danger"; }
   }
 
@@ -398,6 +409,13 @@ el("form").addEventListener("submit",(e)=>{
     return;
   }
 
+  const nights = c.nights;
+  const addBf = !!el("breakfastToggle")?.checked;
+  const bfAdult = Number(t.breakfast_price_adult || 0);
+  const bfChild = Number(t.breakfast_price_child || 0);
+  const bf = addBf ? nights * (st.adults * bfAdult + st.kids * bfChild) : 0;
+  const total = c.price.total + bf;
+
   const expires_at=new Date(Date.now()+15*60*1000).toISOString();
 
   bookings.push({
@@ -408,9 +426,10 @@ el("form").addEventListener("submit",(e)=>{
     adults:st.adults,
     kids:st.kids,
     full_name, phone, email, comment,
+    breakfast: addBf,
     status:"PENDING",
     expires_at,
-    total_price:c.price.total
+    total_price: total
   });
 
   saveBookings(bookings);
@@ -436,6 +455,5 @@ el("form").addEventListener("submit",(e)=>{
   syncSearchState();
   renderCards();
 
-  // быстрый smoke-test
   console.log("app.js loaded", { rooms: ROOM_TYPES?.length, rates: RATES?.length });
 })();

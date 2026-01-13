@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="ru">
 <head>
@@ -217,28 +218,18 @@
     .card:hover{transform:translateY(-2px);border-color:rgba(255,209,102,.55);}
 
     .thumb{
-  width:100%;
-  aspect-ratio: 1 / 1;        /* ← КЛЮЧЕВОЕ: квадрат Карточка */
-  background:
-    linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
-    radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:var(--font-title);
-  font-size:14px;
-  letter-spacing:1.2px;
-  color:rgba(249,251,250,.92);
-  text-transform:uppercase;
-}
-
-@supports not (aspect-ratio: 1 / 1){
-  .thumb{
-    height: 0;
-    padding-bottom: 100%;
-  }
-}
-
+      height:180px;
+      background:
+        linear-gradient(180deg, rgba(11,58,90,.10), rgba(11,58,90,.55)),
+        radial-gradient(900px 260px at 20% 20%, rgba(255,209,102,.20), transparent 60%);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-title);
+      font-size:14px;
+      letter-spacing:1.2px;
+      color:rgba(249,251,250,.92);
+      text-transform:uppercase;
+      position:relative;
+    }
     .thumbLabel{
       padding:6px 10px;
       border-radius:999px;
@@ -316,6 +307,7 @@
     .modalBody{display:grid;grid-template-columns:1.1fr .9fr;gap:0; overflow:auto; max-height:calc(92vh - 56px);}
     .left,.right{padding:16px;}
     .left{border-right:1px solid rgba(255,255,255,.20);}
+
     .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
     .kv .item{padding:10px 12px;border:1px solid rgba(255,255,255,.20);border-radius:14px;background:rgba(0,0,0,.14);}
     .kv .k{color:var(--muted);font-size:12px;}
@@ -354,15 +346,7 @@
       font-weight:900;
     }
 
-    /* Gallery */
-    .gallery{
-      position:relative;
-      height:220px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      overflow:hidden;
-      background: rgba(0,0,0,.10);
-    }
+    /* --- slider buttons/dots (reused) --- */
     .gImg{
       width:100%;
       height:100%;
@@ -385,15 +369,16 @@
       align-items:center;
       justify-content:center;
       cursor:pointer;
+      z-index:2;
     }
     .gPrev{ left:10px; }
     .gNext{ right:10px; }
-
     .gDots{
       position:absolute;
       left:0; right:0; bottom:10px;
       display:flex; justify-content:center;
       gap:8px;
+      z-index:2;
     }
     .gDot{
       width:8px;height:8px;
@@ -406,6 +391,43 @@
     }
     .gDot.active{ background: var(--accent2); }
     .gDots button{ border:none; }
+
+    /* --- card slider label --- */
+    .thumbCard{ position:relative; padding:0; }
+    .thumbCard .thumbLabelLite{
+      position:absolute; left:10px; top:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.22);
+      backdrop-filter: blur(6px);
+      font-family:var(--font-title);
+      font-size:13px;
+      color:rgba(249,251,250,.92);
+      text-transform:none;
+      letter-spacing:.2px;
+      z-index:2;
+    }
+
+    /* --- modal top block (small photo + text) --- */
+    .mTop{
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      gap:12px;
+      align-items:start;
+      margin-bottom:12px;
+    }
+    .mThumb{
+      width:120px;height:120px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.10);
+    }
+    .mThumb img{
+      width:100%;height:100%;
+      object-fit:cover;display:block;
+    }
 
     /* =========================
        RESPONSIVE (KEEP AT END)
@@ -452,8 +474,9 @@
     }
     @media (max-width: 520px){
       .right .two{ grid-template-columns: 1fr; }
-      .gallery{ height:200px; }
       .gNav{ width:36px; height:40px; }
+      .mTop{ grid-template-columns: 100px 1fr; }
+      .mThumb{ width:100px; height:100px; }
     }
   </style>
 </head>
@@ -506,7 +529,7 @@
       <div>
         <label>Взрослые</label>
         <select id="adults">
-          <option>1</option><option selected>2</option><option>3</option><option>4</option>
+          <option selected>1</option><option>2</option><option>3</option><option>4</option>
         </select>
       </div>
       <div>
@@ -532,11 +555,18 @@
 
       <div class="modalBody">
         <div class="left">
-          <div class="gallery" id="mGallery">
-            <button class="gNav gPrev" type="button" id="gPrev" aria-label="Предыдущее фото">‹</button>
-            <img class="gImg" id="gImg" alt="Фото комнаты" />
-            <button class="gNav gNext" type="button" id="gNext" aria-label="Следующее фото">›</button>
-            <div class="gDots" id="gDots"></div>
+          <!-- small photo + description -->
+          <div class="mTop">
+            <div class="mThumb">
+              <img id="mThumbImg" alt="Фото номера" />
+            </div>
+            <div class="mTopText">
+              <div class="sectionTitle" style="margin:0 0 6px;">Описание</div>
+              <div class="desc" id="mDesc" style="min-height:auto;margin:0;color:var(--text);"></div>
+              <div class="mini" style="margin-top:8px;color:var(--muted);">
+                Спальные места: <b id="mBeds">—</b>
+              </div>
+            </div>
           </div>
 
           <div class="kv">
@@ -582,6 +612,12 @@
               </div>
             </div>
 
+            <label style="display:flex;gap:10px;align-items:center;margin-top:6px;">
+              <input type="checkbox" id="breakfastToggle" style="width:auto;transform:scale(1.1);" />
+              <span>Добавить завтраки (доп.)</span>
+            </label>
+            <div class="mini" id="mBreakfastLine"></div>
+
             <div class="note">
               После нажатия «Перейти к оплате»:
               <div class="mini">• создаётся бронь <b>PENDING</b> с холдом на 15 минут</div>
@@ -602,11 +638,7 @@
   <!-- DATA -->
   <script src="./data/room_types.js"></script>
   <script src="./data/rates.js"></script>
-
-  <!-- OPTIONAL (если есть отдельный переключатель темы) -->
   <script src="./theme.js"></script>
-
-  <!-- APP -->
   <script src="./app.js"></script>
 </body>
 </html>
