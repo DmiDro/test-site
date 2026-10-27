@@ -16,13 +16,27 @@ const $=s=>document.querySelector(s), main=$('#main'),booking=$('#booking');
 const menu=$('.menu-toggle');menu.addEventListener('click',()=>{const open=$('#nav').classList.toggle('open');menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Закрыть меню':'Открыть меню')});
 $('.skip').addEventListener('click',e=>{e.preventDefault();main.focus()});
 let trigger;
-document.addEventListener('click',e=>{if(e.target.closest('[data-book]')){trigger=e.target.closest('[data-book]');$('#booking-status').textContent='';booking.showModal()}const filter=e.target.closest('[data-filter]');if(filter){document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===filter)));applyPlaceFilter()}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-book]')){trigger=e.target.closest('[data-book]');booking.showModal();loadBookingWidget()}const filter=e.target.closest('[data-filter]');if(filter){document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===filter)));applyPlaceFilter()}});
 booking.querySelector('.close').addEventListener('click',()=>booking.close());booking.addEventListener('close',()=>trigger?.focus());
-const now=new Date(),iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');$('#arrival').min=iso(now);$('#departure').min=iso(now);
-$('#arrival').addEventListener('change',()=>{const d=new Date($('#arrival').value+'T12:00:00');if(!Number.isNaN(d.getTime())){d.setDate(d.getDate()+1);$('#departure').min=iso(d);if($('#departure').value&&$('#departure').value<iso(d))$('#departure').value=''}});
-$('#dates').addEventListener('submit',e=>{e.preventDefault();if($('#departure').value<=$('#arrival').value){$('#booking-status').textContent='Выезд должен быть позже заезда.';return}$('#booking-status').textContent='Даты выбраны. Реальное бронирование пока не подключено: наличие не проверяется, бронь не создаётся и оплата не принимается.'});
+
 function applyPlaceFilter(){const category=document.querySelector('[data-filter][aria-pressed=true]')?.dataset.filter||'Все';const q=(document.querySelector('#place-search')?.value||'').trim().toLocaleLowerCase('ru').replaceAll('ё','е');let count=0;document.querySelectorAll('#places .card').forEach(c=>{const show=(category==='Все'||c.dataset.type===category)&&c.dataset.search.toLocaleLowerCase('ru').replaceAll('ё','е').includes(q);c.hidden=!show;if(show)count++});document.querySelectorAll('[data-guide-group]').forEach(g=>{g.hidden=![...g.querySelectorAll('.card')].some(c=>!c.hidden)});const status=document.querySelector('#filter-status');if(status)status.textContent='Найдено мест: '+count;const empty=document.querySelector('#no-results');if(empty)empty.hidden=count!==0;}
 $('#place-search')?.addEventListener('input',applyPlaceFilter);
+
+const BOOKING_WIDGET={"provider":"homereserve","token":"NIRVzrkiHl","apartments":[366074,358904,376641,366075,366077]};
+// Isolate provider styles, popups and navigation from the site's styles and hash router.
+// This is the owner's public embedding token, not an account API secret.
+let bookingWidgetMounted=false;
+function loadBookingWidget(){
+  if(bookingWidgetMounted)return;
+  const container=document.querySelector('#hr-widget');
+  const frame=document.createElement('iframe');
+  frame.title='Выбор номера и бронирование RealtyCalendar';
+  const config=JSON.stringify({token:BOOKING_WIDGET.token,apartments:BOOKING_WIDGET.apartments,navigation:false}).replaceAll('<','\\u003c');
+  frame.srcdoc='<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><style>body{margin:0;padding:8px;font:15px Arial,sans-serif}#loading{padding:12px;line-height:1.5}a{color:#253a32}</style></head><body><p id="loading" role="status">Загружаем номера…</p><div id="hr-widget"></div>'+
+    '<'+'script type="module">const status=document.querySelector("#loading");const config='+config+';const fallback=()=>{status.innerHTML=\'Модуль не отобразил номера. <a href="https://homereserve.ru/\'+config.token+\'" target="_blank" rel="noopener">Открыть страницу бронирования ↗</a>\';};const timer=setTimeout(fallback,20000);try{await import("https://homereserve.ru/widget.js");window.homereserve.initWidgetList(config);const observer=new MutationObserver(()=>{if(document.querySelector("#hr-widget .hotels")){clearTimeout(timer);status.hidden=true;observer.disconnect()}});observer.observe(document.querySelector("#hr-widget"),{childList:true,subtree:true});}catch(e){clearTimeout(timer);fallback();}<'+'/script><'+'/body><'+'/html>';
+  container.replaceChildren(frame);bookingWidgetMounted=true;
+  document.querySelector('#booking-status').textContent='';
+}
 
 let calendarState=null;
 function initCalendar(){if(!document.querySelector('#calendar-panel')){calendarState=null;return}const params=new URLSearchParams(location.hash.includes('?')?location.hash.split('?')[1]:location.search);const requested=params.get('tour');const tour=CONTENT_TOURS.some(t=>t.id===requested)?requested:'';const dates=eventData.filter(e=>e.tourId===tour&&e.status!=='cancelled').sort((a,b)=>a.date.localeCompare(b.date));const first=dates.find(e=>e.date>=moscowToday())||dates[0];calendarState={month:tour&&first?first.date.slice(0,7):document.querySelector('#event-month').value,source:'',type:'',scope:'',day:'',tour};document.querySelector('#event-tour').value=tour;updateCalendar()}
