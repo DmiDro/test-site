@@ -1,0 +1,4 @@
+# Draft: HTML pages use noindex. Robots must be able to read that directive.
+# GitHub Pages only uses robots.txt at the origin root.
+User-agent: *
+Allow: /
