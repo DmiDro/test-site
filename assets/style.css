@@ -73,3 +73,18 @@ nav.crumb{display:block;width:auto;padding:0;line-height:1.8;overflow-wrap:anywh
 }
 /* V13: one embedded walking route, independent of the booking widget. */
 .route-map-section{margin:34px 0}.route-map-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;align-items:start}.route-map-frame{border:1px solid var(--line);background:var(--light);min-width:0}.route-map-frame iframe{display:block;border:0;width:100%;height:440px}.route-map-stops article{border-top:1px solid var(--line);padding:16px 0}.map-point-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}.route-map-stops h3{font-size:24px;margin:10px 0}.route-map-stops p{font-size:14px;line-height:1.6}.route-map-stops .btn{width:100%;white-space:normal;text-align:center;gap:8px}.route-map-stops .map-help{font-size:12px;margin-top:14px}@media(max-width:850px){.route-map-layout{grid-template-columns:1fr;gap:18px}.route-map-frame iframe{height:360px}}@media(max-width:520px){.route-map-frame iframe{height:330px}.route-map-section{margin:28px 0}}
+
+/* V14: a single full-width map and one numbered itinerary. */
+.route-map-complete .route-map-frame iframe{height:480px}
+.route-map-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.route-map-actions .btn{white-space:normal;text-align:center}
+.route-map-complete .map-help{font-size:13px;margin:12px 0 24px;max-width:780px}
+.route-map-complete .map-route-caveat{max-width:none;font-size:14px;padding:16px 20px}
+.route-stops-heading{font-size:24px;margin:26px 0 18px}
+.route-stop-grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 24px}
+.route-stop-grid li{display:flex;gap:12px;border-top:1px solid var(--line);padding:18px 0;min-width:0}
+.route-stop-number{flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--accent);border-radius:50%;font-size:12px;color:var(--accent)}
+.route-stop-grid h4{font-family:var(--serif,Georgia,serif);font-size:20px;line-height:1.25;font-weight:400;margin:3px 0 8px}
+.route-stop-grid li p{font-size:13px;line-height:1.65;margin:0}
+@media(max-width:850px){.route-stop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.route-map-complete .route-map-frame iframe{height:400px}}
+@media(max-width:520px){.route-stop-grid{grid-template-columns:1fr}.route-map-complete .route-map-frame iframe{height:360px}.route-map-actions .btn{width:100%}.route-map-complete .map-route-caveat{padding:14px;font-size:13px}.route-stop-grid li{padding:14px 0}}
